@@ -1,0 +1,36 @@
+# Absolute folders
+# --------------
+
+/Library
+/Temp
+/XCode
+/IOS
+/PC
+/Builds
+/Assets/3rdParty/Atesh/.Source/packages
+/Assets/Plugins/Editor/JetBrains*
+
+# Absolute files
+# ------------
+
+*.csproj
+*.csproj.meta
+/*.sln
+
+# Folders everywhere
+# ------------------
+
+.vs
+.idea
+bin
+!/Assets/Plugins/UnityPurchasing/Bin
+obj
+
+# Files everywhere
+# ----------------
+
+*.suo
+*.user
+*.userprefs
+# *.mdb*
+*.pssym*
