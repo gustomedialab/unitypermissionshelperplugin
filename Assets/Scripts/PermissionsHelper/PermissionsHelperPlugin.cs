@@ -4,14 +4,19 @@ using System.Runtime.InteropServices;
 
 namespace PatchedReality.Permissions
 {
-    public class PermissionsHelper
+    //todo: should be made into a singleton...
+    public class PermissionsHelperPlugin : Singleton<PermissionsHelperPlugin>
     {
+        public delegate void PermissionStatusUpdatedDelegate(PermissionType permission, bool success);
+        public static PermissionStatusUpdatedDelegate OnPermissionStatusUpdated;
+
         public enum PermissionType
         {
             PRCameraPermissions = 0,
             PRMicrophonePermissions = 1,
             PRLocationWhileUsingPermissions = 2,
-            PRSpeechRecognitionPermissions = 3
+            PRSpeechRecognitionPermissions = 3,
+            PRPermissionTypeUnknown = 255
         }
         public enum PermissionStatus
         {
@@ -22,26 +27,47 @@ namespace PatchedReality.Permissions
             PRPermissionStatusUnknownPermission = 255
         }
 
+        protected PermissionsHelperPlugin(){}
 
-        public static void RequestPermission(PermissionType permission, GameObject go, string successMethod, string failureMethod)
+
+        public void RequestPermission(PermissionType permission)
         {
-            if (go == null)
-            {
-                Debug.LogError("Cannot request permissions without a callback object!");
-                return;
-            }
-
-            _requestPermission((int)permission, go.name, successMethod, failureMethod);
+            _requestPermission((int)permission, this.gameObject.name,"PermissionRequestSuccess","PermissionRequestFailure");
         }
 
-        public static void OpenSettings()
+        public void OpenSettings()
         {
             _openSettings();
         }
 
-        public static PermissionStatus GetPermissionStatus(PermissionType permission)
+        public PermissionStatus GetPermissionStatus(PermissionType permission)
         {
             return (PermissionStatus)_getPermissionStatus((int)permission);
+        }
+
+        void PermissionRequestSuccess(string permissionType) 
+        {
+            int permAsInt;
+            PermissionType type = PermissionType.PRPermissionTypeUnknown;
+            if(int.TryParse(permissionType,out permAsInt))
+            {
+                type = (PermissionType)permAsInt;
+            }
+            
+            Debug.Log("Got success callback from native with: " + type.ToString());
+            OnPermissionStatusUpdated?.Invoke(type,true);
+        }
+
+        void PermissionRequestFailure(string permissionType)
+        {
+            int permAsInt;
+            PermissionType type = PermissionType.PRPermissionTypeUnknown;
+            if(int.TryParse(permissionType,out permAsInt))
+            {
+                type = (PermissionType)permAsInt;
+            }
+            Debug.Log("Got failure callback from native with: " + type.ToString());
+            OnPermissionStatusUpdated?.Invoke(type,false);
         }
 
 #if UNITY_IOS && !UNITY_EDITOR
