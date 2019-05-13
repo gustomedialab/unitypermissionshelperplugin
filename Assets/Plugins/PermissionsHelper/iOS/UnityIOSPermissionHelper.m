@@ -150,21 +150,76 @@ const int PRPermissionStatusUnknownPermission=255; //you asked about a device/pe
 
 - (void) requestLocationWhileUsingPermission:(NSString *)NSGameObject withSuccessCallback:(NSString *)NSSucessCallback withFailureCallback:(NSString *)NSFailureCallback
 {
-    //todo: add body to request permisssion with async callbacks as appropriate.
+    //We always callback with success, immmediately. On the C# side, requesting permission is
+    //actually handled by working with unity locations. However, we do expose methods to get
+    //location permissions, since that is easier to work with.
+    [ self doPermissionsCallback:NSGameObject withCallback:NSSucessCallback withPermission:PRLocationWhileUsingPermissions ];
 }
 
 -(int) GetLocationWhileUsingPermissions
 {
+    CLAuthorizationStatus status = [CLLocationManager authorizationStatus];
+    switch(status)
+    {
+        case kCLAuthorizationStatusDenied:
+            return PRPermissionStatusDenied;
+        case kCLAuthorizationStatusRestricted:
+            return PRPermissionStatusRestricted;
+        case kCLAuthorizationStatusAuthorizedWhenInUse:
+        case kCLAuthorizationStatusAuthorizedAlways:
+            return PRPermissionStatusAuthorized;
+        case kCLAuthorizationStatusNotDetermined:
+            return PRPermissionStatusUnknown;
+    }
+    
     return PRPermissionStatusUnknown;
 }
 
 - (void) requestSpeechRecognitionPermission:(NSString *)NSGameObject withSuccessCallback:(NSString *)NSSucessCallback withFailureCallback:(NSString *)NSFailureCallback
 {
-    //todo: add body to request permisssion with async callbacks as appropriate.
+    //if already denied, or already granted, do not ask.
+    int permissionStatus = [self GetSpeechRecognitionPermissions];
+    if(permissionStatus==PRPermissionStatusRestricted || permissionStatus==PRPermissionStatusDenied)
+    {
+        //should not ask again, already restricted or denied. call the failure callback.
+        [ self doPermissionsCallback:NSGameObject withCallback:NSFailureCallback withPermission:PRSpeechRecognitionPermissions ];
+        return;
+    }
+    else if(permissionStatus==PRPermissionStatusAuthorized)
+    {
+        //already have permission, call success callback.
+        [ self doPermissionsCallback:NSGameObject withCallback:NSSucessCallback withPermission:PRSpeechRecognitionPermissions ];
+        return;
+    }
+    
+    [SFSpeechRecognizer requestAuthorization:^(SFSpeechRecognizerAuthorizationStatus status) {
+        if(status==SFSpeechRecognizerAuthorizationStatusAuthorized)
+        {
+             [self doPermissionsCallback:NSGameObject withCallback:NSSucessCallback withPermission:PRSpeechRecognitionPermissions ];
+        }
+        else
+        {
+             [self doPermissionsCallback:NSGameObject withCallback:NSFailureCallback withPermission:PRSpeechRecognitionPermissions ];
+        }
+    }];
+    
+    
 }
 
 -(int) GetSpeechRecognitionPermissions
 {
+    SFSpeechRecognizerAuthorizationStatus status = [SFSpeechRecognizer authorizationStatus];
+    switch(status)
+    {
+        case SFSpeechRecognizerAuthorizationStatusDenied:
+            return PRPermissionStatusDenied;
+        case SFSpeechRecognizerAuthorizationStatusRestricted:
+            return PRPermissionStatusRestricted;
+        case SFSpeechRecognizerAuthorizationStatusAuthorized:
+            return PRPermissionStatusAuthorized;
+        case SFSpeechRecognizerAuthorizationStatusNotDetermined:
+            return PRPermissionStatusUnknown;
+    }
     return PRPermissionStatusUnknown;
 }
 

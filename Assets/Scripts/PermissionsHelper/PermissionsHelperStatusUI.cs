@@ -37,7 +37,7 @@ namespace PatchedReality.Permissions
             //ask plugin manager about our permissions, since it might have changed.
             //TODO: This seems to trigger a crash when coming back from settings...but only when we have changed a status. 
             //Investigate!
-            //UpdateTextStatusFromPlugin();
+            UpdateTextStatusFromPlugin();
         }
 
         void HandlePermissionRequestStatusChange(PermissionType permission, bool result)

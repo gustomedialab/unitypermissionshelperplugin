@@ -32,6 +32,13 @@ namespace PatchedReality.Permissions
 
         public void RequestPermission(PermissionType permission)
         {
+            //note: location is special, because requesting it a a bit fancy, we have a special object to handle that.
+            if(permission.Equals(PermissionType.PRLocationWhileUsingPermissions))
+            {
+                RequestLocationPermissions();
+                return;
+            }
+            
             _requestPermission((int)permission, this.gameObject.name,"PermissionRequestSuccess","PermissionRequestFailure");
         }
 
@@ -45,6 +52,25 @@ namespace PatchedReality.Permissions
             return (PermissionStatus)_getPermissionStatus((int)permission);
         }
 
+        void RequestLocationPermissions()
+        {
+            PermissionStatus currStatus = this.GetPermissionStatus(PermissionType.PRLocationWhileUsingPermissions);
+            if(currStatus.Equals(PermissionStatus.PRPermissionStatusDenied) || currStatus.Equals(PermissionStatus.PRPermissionStatusRestricted))
+            {
+                //fail immediately, no reason to bother checking.
+                this.PermissionRequestFailure(((int)PermissionType.PRLocationWhileUsingPermissions).ToString());
+                return;
+            }
+            else if(currStatus.Equals(PermissionStatus.PRPermissionStatusAuthorized))
+            {
+                //succeed immediately, they have already granted what we need.
+                this.PermissionRequestSuccess(((int)PermissionType.PRLocationWhileUsingPermissions).ToString());
+                return;
+            }
+
+            //otherwise, have our little location helper find out whats what.
+            LocationHelper.RequestLocationPermissions(this.PermissionRequestSuccess,this.PermissionRequestFailure);
+        }
         void PermissionRequestSuccess(string permissionType) 
         {
             int permAsInt;
@@ -69,6 +95,27 @@ namespace PatchedReality.Permissions
             Debug.Log("Got failure callback from native with: " + type.ToString());
             OnPermissionStatusUpdated?.Invoke(type,false);
         }
+
+        LocationChecker LocationHelper
+        {
+            get
+            {
+                if(locationHelper==null)
+                {
+                    locationHelper = GetComponentInChildren<LocationChecker>();
+                    if(locationHelper == null)
+                    {
+                        //then make it.
+                        GameObject go = new GameObject("LocationPermissionChecker");
+                        go.transform.SetParent(this.transform);
+                        locationHelper = go.AddComponent<LocationChecker>();
+
+                    }
+                }
+                return locationHelper;
+            }
+        }
+        LocationChecker locationHelper;
 
 #if UNITY_IOS && !UNITY_EDITOR
         [DllImport ("__Internal")]
