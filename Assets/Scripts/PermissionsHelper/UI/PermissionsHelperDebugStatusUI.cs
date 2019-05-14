@@ -1,19 +1,20 @@
-﻿/**
-    Utility UI to show status of a permission in associated ui text field.
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
 
- */
-namespace PatchedReality.Permissions
+namespace PatchedReality.Permissions.UI
 {
-    using System.Collections;
-    using System.Collections.Generic;
-    using UnityEngine;
-    using PermissionType=PermissionsHelperPlugin.PermissionType;
-    using PermissionStatus=PermissionsHelperPlugin.PermissionStatus;
 
+    using PermissionType = PermissionsHelperPlugin.PermissionType;
+    using PermissionStatus = PermissionsHelperPlugin.PermissionStatus;
+
+    /**
+    Utility UI to show status of a permission in associated ui text field.
+    */
     [RequireComponent(typeof(UnityEngine.UI.Text))]
     public class PermissionsHelperStatusUI : MonoBehaviour
     {
-        [SerializeField]protected PermissionType Permission;
+        [SerializeField] protected PermissionType Permission;
 
         /// <summary>
         /// This function is called when the object becomes enabled and active.
@@ -42,7 +43,7 @@ namespace PatchedReality.Permissions
 
         void HandlePermissionRequestStatusChange(PermissionType permission, bool result)
         {
-            if(permission.Equals(Permission))
+            if (permission.Equals(Permission))
             {
                 //query plugin to get actual status - really only needed when result is negative, 
                 //but cleaner to do it every time could be declined or restricted.
@@ -53,14 +54,14 @@ namespace PatchedReality.Permissions
         void UpdateTextStatusFromPlugin()
         {
             PermissionStatus status = PermissionsHelperPlugin.Instance.GetPermissionStatus(Permission);
-            TextField.text = string.Format("{0}:\n{1}",Permission.ToString(),status.ToString());
+            TextField.text = string.Format("{0}:\n{1}", Permission.ToString(), status.ToString());
         }
 
         UnityEngine.UI.Text TextField
         {
             get
             {
-                if(textField==null)
+                if (textField == null)
                 {
                     textField = GetComponent<UnityEngine.UI.Text>();
                 }

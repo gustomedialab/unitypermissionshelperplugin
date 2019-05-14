@@ -1,8 +1,10 @@
-﻿namespace PatchedReality.Permissions
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+
+namespace PatchedReality.Permissions.UI
 {
-    using System.Collections;
-    using System.Collections.Generic;
-    using UnityEngine;
     using PermissionType = PermissionsHelperPlugin.PermissionType;
     using PermissionStatus = PermissionsHelperPlugin.PermissionStatus;
 
@@ -10,7 +12,7 @@
     public class PermissionsHelperRequestButton : MonoBehaviour
     {
 
-        [SerializeField]protected PermissionType Permission;
+        [SerializeField] protected PermissionType Permission;
 
         /// <summary>
         /// Start is called on the frame when a script is enabled just before
@@ -20,7 +22,7 @@
         {
             Button.onClick.AddListener(HandleButtonClick);
         }
-        
+
         void OnEnable()
         {
             PermissionsHelperPlugin.OnPermissionStatusUpdated += HandlePermissionRequestStatusChange;
@@ -36,7 +38,7 @@
 
         void HandlePermissionRequestStatusChange(PermissionType permission, bool result)
         {
-            if(Permission.Equals(permission))
+            if (Permission.Equals(permission))
             {
                 UpdateButtonState(result);
             }

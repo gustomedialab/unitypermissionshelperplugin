@@ -1,9 +1,9 @@
-﻿namespace PatchedReality.Permissions
-{
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
 
-    using System.Collections;
-    using System.Collections.Generic;
-    using UnityEngine;
+namespace PatchedReality.Permissions.UI
+{
 
     [RequireComponent(typeof(UnityEngine.UI.Button))]
     public class OpenSettingsButton : MonoBehaviour
