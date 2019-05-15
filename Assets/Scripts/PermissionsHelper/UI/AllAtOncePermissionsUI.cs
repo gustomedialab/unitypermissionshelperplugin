@@ -10,7 +10,7 @@ namespace PatchedReality.Permissions.UI
     using PermissionStatus = PermissionsHelperPlugin.PermissionStatus;
     using CollectiveState = CollectivePermissionsStatus.CollectiveState;
     //manage overall screen state for the permissions UI - mainly messaging the player appropriately.
-    public class AllAtOncePermissionsUI : MonoBehaviour, IOrderedPermissionsProvider
+    public class AllAtOncePermissionsUI : MonoBehaviour
     {
         //TODO: this list appears on a couple components. think of a way 
         //to just set it in one place..
@@ -42,7 +42,6 @@ namespace PatchedReality.Permissions.UI
         void OnEnable()
         {
             PermissionsHelperPlugin.OnPermissionStatusUpdated+=HandlePermissionChanged;
-            PermissionsHandler.Initialize(this);
             UpdateMessages();
         }
 
@@ -61,8 +60,7 @@ namespace PatchedReality.Permissions.UI
 
         void UpdateMessages()
         {
-            var permsCollection = new CollectivePermissionsStatus(PermissionsInOrder);
-            CollectiveState state = permsCollection.GetCurrentState();
+            var state = PermissionsHelperPlugin.Instance.GetCollectiveState();
             switch(state)
             {
                 case CollectiveState.AllAuthorized:

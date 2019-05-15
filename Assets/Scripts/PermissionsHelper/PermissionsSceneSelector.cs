@@ -33,8 +33,10 @@ namespace PatchedReality.Permissions
         /// </summary>
         void Start()
         {
+            PermissionsHelperPlugin.Instance.SetRequiredPermissions(RequiredPermissions);
+            var status = PermissionsHelperPlugin.Instance.GetCollectiveState();
             PatchedReality.Permissions.UI.AllAtOncePermissionsButtonHandler.OnAllPermissionsAuthorized += ToMainScene;
-            var status = (new CollectivePermissionsStatus(RequiredPermissions)).GetCurrentState();
+            
             if(status.Equals(CollectiveState.AllAuthorized))
             {
                 ToMainScene();

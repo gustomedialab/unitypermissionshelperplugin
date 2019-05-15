@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
 namespace PatchedReality.Permissions
@@ -27,19 +28,47 @@ namespace PatchedReality.Permissions
             PRPermissionStatusUnknownPermission = 255
         }
 
-        protected PermissionsHelperPlugin(){}
+        protected PermissionsHelperPlugin() { }
 
+        public List<PermissionType> RequiredPermissions
+        {
+            get
+            {
+                return requiredPermissions;
+            }
+        }
+        protected List<PermissionType> requiredPermissions = new List<PermissionType>();
 
+        /*
+            Use this method to specify which permissions are required, in order.
+            used in various high level apis to get collective state, 
+            request all permissions, etc. Usually good to call this in the boot strap of your
+            app.
+         */
+        public void SetRequiredPermissions(List<PermissionType> inOrderList)
+        {
+            requiredPermissions.Clear();
+            requiredPermissions.AddRange(inOrderList);
+        }
+
+        public CollectivePermissionsStatus.CollectiveState GetCollectiveState()
+        {
+            //returns collective state for required permissions.
+            return (new CollectivePermissionsStatus(requiredPermissions)).GetCurrentState();
+            
+        }
+
+        
         public void RequestPermission(PermissionType permission)
         {
             //note: location is special, because requesting it a a bit fancy, we have a special object to handle that.
-            if(permission.Equals(PermissionType.PRLocationWhileUsingPermissions))
+            if (permission.Equals(PermissionType.PRLocationWhileUsingPermissions))
             {
                 RequestLocationPermissions();
                 return;
             }
-            
-            _requestPermission((int)permission, this.gameObject.name,"PermissionRequestSuccess","PermissionRequestFailure");
+
+            _requestPermission((int)permission, this.gameObject.name, "PermissionRequestSuccess", "PermissionRequestFailure");
         }
 
         public void OpenSettings()
@@ -55,13 +84,13 @@ namespace PatchedReality.Permissions
         void RequestLocationPermissions()
         {
             PermissionStatus currStatus = this.GetPermissionStatus(PermissionType.PRLocationWhileUsingPermissions);
-            if(currStatus.Equals(PermissionStatus.PRPermissionStatusDenied) || currStatus.Equals(PermissionStatus.PRPermissionStatusRestricted))
+            if (currStatus.Equals(PermissionStatus.PRPermissionStatusDenied) || currStatus.Equals(PermissionStatus.PRPermissionStatusRestricted))
             {
                 //fail immediately, no reason to bother checking.
                 this.PermissionRequestFailure(((int)PermissionType.PRLocationWhileUsingPermissions).ToString());
                 return;
             }
-            else if(currStatus.Equals(PermissionStatus.PRPermissionStatusAuthorized))
+            else if (currStatus.Equals(PermissionStatus.PRPermissionStatusAuthorized))
             {
                 //succeed immediately, they have already granted what we need.
                 this.PermissionRequestSuccess(((int)PermissionType.PRLocationWhileUsingPermissions).ToString());
@@ -69,41 +98,41 @@ namespace PatchedReality.Permissions
             }
 
             //otherwise, have our little location helper find out whats what.
-            LocationHelper.RequestLocationPermissions(this.PermissionRequestSuccess,this.PermissionRequestFailure);
+            LocationHelper.RequestLocationPermissions(this.PermissionRequestSuccess, this.PermissionRequestFailure);
         }
-        void PermissionRequestSuccess(string permissionType) 
+        void PermissionRequestSuccess(string permissionType)
         {
             int permAsInt;
             PermissionType type = PermissionType.PRPermissionTypeUnknown;
-            if(int.TryParse(permissionType,out permAsInt))
+            if (int.TryParse(permissionType, out permAsInt))
             {
                 type = (PermissionType)permAsInt;
             }
-            
+
             Debug.Log("Got success callback from native with: " + type.ToString());
-            OnPermissionStatusUpdated?.Invoke(type,true);
+            OnPermissionStatusUpdated?.Invoke(type, true);
         }
 
         void PermissionRequestFailure(string permissionType)
         {
             int permAsInt;
             PermissionType type = PermissionType.PRPermissionTypeUnknown;
-            if(int.TryParse(permissionType,out permAsInt))
+            if (int.TryParse(permissionType, out permAsInt))
             {
                 type = (PermissionType)permAsInt;
             }
             Debug.Log("Got failure callback from native with: " + type.ToString());
-            OnPermissionStatusUpdated?.Invoke(type,false);
+            OnPermissionStatusUpdated?.Invoke(type, false);
         }
 
         LocationChecker LocationHelper
         {
             get
             {
-                if(locationHelper==null)
+                if (locationHelper == null)
                 {
                     locationHelper = GetComponentInChildren<LocationChecker>();
-                    if(locationHelper == null)
+                    if (locationHelper == null)
                     {
                         //then make it.
                         GameObject go = new GameObject("LocationPermissionChecker");

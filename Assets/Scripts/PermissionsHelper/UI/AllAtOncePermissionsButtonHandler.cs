@@ -45,21 +45,6 @@ namespace PatchedReality.Permissions.UI
 
         protected ButtonContext context = ButtonContext.Beginning;
 
-        protected List<PermissionType> PermissionsInOrder
-        {
-            get
-            {
-                if (listProvider == null)
-                {
-                    Debug.LogError("MIssing permission list provider on button - you need to supply this from outside!");
-                    return new List<PermissionType>();
-                }
-
-                return listProvider.GetOrderedPermissions();
-            }
-        }
-
-        protected IOrderedPermissionsProvider listProvider;
         private SerialPermissionAuthSequence authSequence;
 
         /// <summary>
@@ -75,11 +60,9 @@ namespace PatchedReality.Permissions.UI
         /// <summary>
         ///  sets us to the beginning context, and figures out how to label us.
         /// </summary>
-        public void Initialize(IOrderedPermissionsProvider listProvider)
+        void OnEnable()
         {
-            this.listProvider = listProvider;
-            var permsCollection = new CollectivePermissionsStatus(PermissionsInOrder);
-            CollectivePermissionsStatus.CollectiveState state = permsCollection.GetCurrentState();
+            var state = PermissionsHelperPlugin.Instance.GetCollectiveState();
             MyButton.interactable = true;
             switch (state)
             {
@@ -110,7 +93,7 @@ namespace PatchedReality.Permissions.UI
                     {
                         //start a permission flow. disable our button.
                         context = ButtonContext.Processing;
-                        authSequence = new SerialPermissionAuthSequence(PermissionsInOrder);
+                        authSequence = new SerialPermissionAuthSequence(PermissionsHelperPlugin.Instance.RequiredPermissions);
                         UpdateLabel();
                         MyButton.interactable = false;
                         authSequence.Start(HandleFlowDone);
@@ -125,8 +108,7 @@ namespace PatchedReality.Permissions.UI
                 case ButtonContext.Completed:
                     {
 
-                        var permsCollection = new CollectivePermissionsStatus(PermissionsInOrder);
-                        CollectivePermissionsStatus.CollectiveState state = permsCollection.GetCurrentState();
+                        var state = PermissionsHelperPlugin.Instance.GetCollectiveState();
                         if (state == CollectiveState.AllAuthorized)
                         {
                             //trigger our delegate, which will handle doing the right thing.
@@ -155,9 +137,8 @@ namespace PatchedReality.Permissions.UI
 
         void UpdateLabel()
         {
-            var permsCollection = new CollectivePermissionsStatus(PermissionsInOrder);
-            CollectivePermissionsStatus.CollectiveState state = permsCollection.GetCurrentState();
-            Debug.Log(">>>Collective state is: " + state.ToString());
+
+            CollectivePermissionsStatus.CollectiveState state = PermissionsHelperPlugin.Instance.GetCollectiveState();
             switch (context)
             {
                 case ButtonContext.Beginning:
