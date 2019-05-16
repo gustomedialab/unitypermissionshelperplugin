@@ -16,7 +16,7 @@ namespace PatchedReality.Permissions.UI
     {
         [SerializeField] protected PermissionType Permission;
 
-        /// <summary>
+        /// <summary>   
         /// This function is called when the object becomes enabled and active.
         /// </summary>
         void OnEnable()

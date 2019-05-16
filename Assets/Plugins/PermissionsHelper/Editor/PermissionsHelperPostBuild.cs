@@ -14,7 +14,7 @@
         //offered in unity build settings.
 		private static List<KeyValuePair<string,string>> UsageStringsToAdd = new List<KeyValuePair<string,string>>()
         {
-            new KeyValuePair<string,string>("NSSpeechRecognitionUsageDescription","Speech recognition so your rabbit can understand what you say."),
+            new KeyValuePair<string,string>("NSSpeechRecognitionUsageDescription","Speech recognition so we can understand what you say."),
         };
 
 

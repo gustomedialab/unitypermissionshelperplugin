@@ -9,12 +9,12 @@ EditorBuildSettings:
     path: 
     guid: 00000000000000000000000000000000
   - enabled: 1
-    path: Assets/Scenes/BootStrap.unity
+    path: Assets/Examples/Scenes/BootStrap.unity
     guid: 02b5314ce4e2940da9b197a071e7ec23
   - enabled: 1
-    path: Assets/Scenes/TestScene.unity
+    path: Assets/Examples/Scenes/TestScene.unity
     guid: 29807c48e237b43e2ab4efcf2c452c7a
   - enabled: 1
-    path: Assets/Scenes/AllAtOnceStyle.unity
+    path: Assets/Examples/Scenes/AllAtOnceStyle.unity
     guid: 0245f012feb244c9094b11399352ecb5
   m_configObjects: {}

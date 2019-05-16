@@ -17,8 +17,11 @@ namespace PatchedReality.Permissions.UI
     [RequireComponent(typeof(UnityEngine.UI.Button))]
     public class AllAtOncePermissionsButtonHandler : MonoBehaviour
     {
+        //This delegate will get called when the user has given us all auth we need 
+        //and is ready to continue. TODO: It would be nice if this were abstracted out
+        //to a higher level. For now, it's here for simplicity sake.
         public delegate void PermissionSequenceChangeHandler();
-        public static PermissionSequenceChangeHandler OnAllPermissionsAuthorized;
+        public static PermissionSequenceChangeHandler OnUserReadyToContinue;
 
 
         [SerializeField] protected TMP_Text Label;
@@ -90,38 +93,38 @@ namespace PatchedReality.Permissions.UI
             switch (context)
             {
                 case ButtonContext.Beginning:
-                    {
-                        //start a permission flow. disable our button.
-                        context = ButtonContext.Processing;
-                        authSequence = new SerialPermissionAuthSequence(PermissionsHelperPlugin.Instance.RequiredPermissions);
-                        UpdateLabel();
-                        MyButton.interactable = false;
-                        authSequence.Start(HandleFlowDone);
-                        break;
-                    }
+                {
+                    //start a permission flow. disable our button.
+                    context = ButtonContext.Processing;
+                    authSequence = new SerialPermissionAuthSequence(PermissionsHelperPlugin.Instance.RequiredPermissions);
+                    UpdateLabel();
+                    MyButton.interactable = false;
+                    authSequence.Start(HandleFlowDone);
+                    break;
+                }
                 case ButtonContext.Processing:
-                    {
-                        //a no-op, just warn cause it shouldn't happen.
-                        Debug.LogWarning("Got button click in processing. Should be inactive");
-                        break;
-                    }
+                {
+                    //a no-op, just warn cause it shouldn't happen.
+                    Debug.LogWarning("Got button click in processing. Should be inactive");
+                    break;
+                }
                 case ButtonContext.Completed:
+                {
+
+                    var state = PermissionsHelperPlugin.Instance.GetCollectiveState();
+                    if (state == CollectiveState.AllAuthorized)
                     {
-
-                        var state = PermissionsHelperPlugin.Instance.GetCollectiveState();
-                        if (state == CollectiveState.AllAuthorized)
-                        {
-                            //trigger our delegate, which will handle doing the right thing.
-                            OnAllPermissionsAuthorized?.Invoke();
-                        }
-                        else
-                        {
-                            //not all happy, need to go to settings.
-                            PermissionsHelperPlugin.Instance.OpenSettings();
-                        }
-
-                        break;
+                        //trigger our delegate, which will handle doing the right thing.
+                        OnUserReadyToContinue?.Invoke();
                     }
+                    else
+                    {
+                        //not all happy, need to go to settings.
+                        PermissionsHelperPlugin.Instance.OpenSettings();
+                    }
+
+                    break;
+                }
             }
         }
 

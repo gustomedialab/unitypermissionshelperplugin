@@ -46,16 +46,10 @@ namespace PatchedReality.Permissions {
 	                        _instance = singleton.AddComponent<T>();
 	                        singleton.name = "(singleton) "+ typeof(T).ToString();
 	                        
-	                        DontDestroyOnLoad(singleton);
-	                        
-//							Debug.unityLogger.Log("[Singleton] An instance of " + typeof(T) + 
-//	                                  " is needed in the scene, so '" + singleton +
-//	                                  "' was created with DontDestroyOnLoad.");
 	                    } 
-	//                    else {
-	//                        Logger.Log("[Singleton] Using instance already created: " +
-	//                                  _instance.gameObject.name);
-	//                    }
+
+                        DontDestroyOnLoad(_instance.gameObject);
+
 	                }
 	                
 	                return _instance;

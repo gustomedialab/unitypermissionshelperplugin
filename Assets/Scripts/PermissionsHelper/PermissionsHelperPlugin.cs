@@ -30,6 +30,7 @@ namespace PatchedReality.Permissions
 
         protected PermissionsHelperPlugin() { }
 
+       
         public List<PermissionType> RequiredPermissions
         {
             get
@@ -161,13 +162,13 @@ namespace PatchedReality.Permissions
             GameObject go = GameObject.Find(gameObject);
             if (go != null)
             {
-                go.SendMessage(failureCallback, permissionType.ToString());
+                go.SendMessage(successCallback, permissionType.ToString());
             }
         }
 
         private static int _getPermissionStatus(int permissionType)
         {
-            return (int)PermissionStatus.PRPermissionStatusUnknownPermission;
+            return (int)PermissionStatus.PRPermissionStatusAuthorized;
         }
 
 
