@@ -47,7 +47,8 @@ namespace PatchedReality.Permissions
             {
                 var permission = permissionsInOrder[i];
                 if (currentPermissions[permission] ==
-                    PermissionStatus.PRPermissionStatusUnknown)
+                    PermissionStatus.PRPermissionStatusUnknown || 
+                    currentPermissions[permission] == PermissionStatus.PRPermissionStatusUnknownPermission)
                 {
                     Debug.Log("Choosing perm: " + permission.ToString());
                     //increment current and ask for it.

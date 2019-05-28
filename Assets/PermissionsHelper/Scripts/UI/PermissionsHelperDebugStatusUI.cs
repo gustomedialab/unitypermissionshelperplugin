@@ -12,11 +12,11 @@ namespace PatchedReality.Permissions.UI
     Utility UI to show status of a permission in associated ui text field.
     */
     [RequireComponent(typeof(UnityEngine.UI.Text))]
-    public class PermissionsHelperStatusUI : MonoBehaviour
+    public class PermissionsHelperDebugStatusUI : MonoBehaviour
     {
         [SerializeField] protected PermissionType Permission;
 
-        /// <summary>   
+        /// <summary>
         /// This function is called when the object becomes enabled and active.
         /// </summary>
         void OnEnable()

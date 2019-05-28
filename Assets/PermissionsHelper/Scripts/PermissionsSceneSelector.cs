@@ -35,7 +35,7 @@ namespace PatchedReality.Permissions
         {
             PermissionsHelperPlugin.Instance.SetRequiredPermissions(RequiredPermissions);
             var status = PermissionsHelperPlugin.Instance.GetCollectiveState();
-            PatchedReality.Permissions.UI.AllAtOncePermissionsButtonHandler.OnUserReadyToContinue += ToMainScene;
+            PatchedReality.Permissions.UI.AllAtOncePermissionsButtonHandler.OnAllPermissionsAuthorized += ToMainScene;
             
             if(status.Equals(CollectiveState.AllAuthorized))
             {
@@ -57,7 +57,7 @@ namespace PatchedReality.Permissions
         }
         void ToMainScene()
         {
-            PatchedReality.Permissions.UI.AllAtOncePermissionsButtonHandler.OnUserReadyToContinue -= ToMainScene;
+            PatchedReality.Permissions.UI.AllAtOncePermissionsButtonHandler.OnAllPermissionsAuthorized -= ToMainScene;
             SceneManager.LoadScene(MainScene,LoadSceneMode.Single);
         }
 

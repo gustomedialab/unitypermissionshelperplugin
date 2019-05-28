@@ -8,6 +8,8 @@ namespace PatchedReality.Permissions
     //todo: should be made into a singleton...
     public class PermissionsHelperPlugin : Singleton<PermissionsHelperPlugin>
     {
+        public delegate void PermissionRequestStartDelegate(PermissionType permission);
+        public static PermissionRequestStartDelegate OnPermissionRequestStarted;
         public delegate void PermissionStatusUpdatedDelegate(PermissionType permission, bool success);
         public static PermissionStatusUpdatedDelegate OnPermissionStatusUpdated;
 
@@ -30,7 +32,6 @@ namespace PatchedReality.Permissions
 
         protected PermissionsHelperPlugin() { }
 
-       
         public List<PermissionType> RequiredPermissions
         {
             get
@@ -62,6 +63,7 @@ namespace PatchedReality.Permissions
         
         public void RequestPermission(PermissionType permission)
         {
+            OnPermissionRequestStarted?.Invoke(permission);
             //note: location is special, because requesting it a a bit fancy, we have a special object to handle that.
             if (permission.Equals(PermissionType.PRLocationWhileUsingPermissions))
             {
@@ -159,16 +161,20 @@ namespace PatchedReality.Permissions
 #else
         private static void _requestPermission(int permissionType, string gameObject, string successCallback, string failureCallback)
         {
+            Debug.Log("request started " + permissionType.ToString());
+            //simulate the request taking time...
             GameObject go = GameObject.Find(gameObject);
             if (go != null)
             {
-                go.SendMessage(successCallback, permissionType.ToString());
+                go.SendMessage(failureCallback, permissionType.ToString());
             }
+        
+            
         }
 
         private static int _getPermissionStatus(int permissionType)
         {
-            return (int)PermissionStatus.PRPermissionStatusAuthorized;
+            return (int)PermissionStatus.PRPermissionStatusUnknownPermission;
         }
 
 
@@ -176,6 +182,8 @@ namespace PatchedReality.Permissions
         {
             UnityEngine.Debug.LogWarning("Open Settings  - platform unsupported");
         }
+
+        
 #endif
 
     }

@@ -17,19 +17,17 @@ namespace PatchedReality.Permissions.UI
         [Tooltip("In order list of permissions we will ask for in sequence.")]
         [SerializeField] protected List<PermissionType> PermissionsInOrder;
 
-        [SerializeField] protected TMP_Text HeaderText;
+        [SerializeField] protected GameObject HeaderLogo;
         [SerializeField] protected TMP_Text MessageText;
 
         [SerializeField] protected AllAtOncePermissionsButtonHandler PermissionsHandler;
 
-        [SerializeField] protected string NeedAuthHeader = "Welcome Stranger";
-        [SerializeField] protected string NeedAuthMessage = "We need some permissions from you before you can use the app.";
+        
+        [SerializeField] protected string NeedAuthMessage = "In order to work our magic, we'll need you to grant us a few permissions.";
 
-        [SerializeField] protected string NeedSettingsHeader = "One More Step";
-        [SerializeField] protected string NeedSettingsMessage = "In order to complete giving permissions you need to go to settings and allow: {0}";
+        [SerializeField] protected string NeedSettingsMessage = "In order to complete giving permissions you need to go to phone settings";
 
 
-        [SerializeField] protected string AllDoneHeader = "Thanks!";
         [SerializeField] protected string AllDoneMessage = "Great! You're ready to go. Enjoy!";
 
         public List<PermissionType> GetOrderedPermissions()
@@ -61,24 +59,25 @@ namespace PatchedReality.Permissions.UI
         void UpdateMessages()
         {
             var state = PermissionsHelperPlugin.Instance.GetCollectiveState();
+            Debug.Log("In update message with state of: " + state.ToString());
             switch(state)
             {
                 case CollectiveState.AllAuthorized:
                 {
-                    HeaderText.text = AllDoneHeader;
+                    
                     MessageText.text = AllDoneMessage;
                     break;
                 }
                 case CollectiveState.AllUnknown:
                 case CollectiveState.SomeUnknown:
                 {
-                    HeaderText.text = NeedAuthHeader;
+                   
                     MessageText.text = NeedAuthMessage;
                     break;
                 }
                 case CollectiveState.AllAsked:
                 {
-                    HeaderText.text = NeedSettingsHeader;
+                    
                     MessageText.text = NeedSettingsMessage;
                     break;
                 }

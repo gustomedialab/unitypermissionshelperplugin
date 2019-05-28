@@ -205,7 +205,7 @@ MonoBehaviour:
     m_LineSpacing: 1
   m_Text: 'Permissions Helper
 
-    (Test Scene)'
+    (Test Main)'
 --- !u!222 &18989394
 CanvasRenderer:
   m_ObjectHideFlags: 0

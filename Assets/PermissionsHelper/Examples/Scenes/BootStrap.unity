@@ -130,7 +130,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &136656854
 RectTransform:
   m_ObjectHideFlags: 0
@@ -415,9 +415,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb04d94bb684044d9b007624fc6968ac, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  PermissionsScene: AllAtOnceStyle
-  MainScene: TestScene
-  RequiredPermissions: 00000000010000000200000003000000
+  PermissionsScene: RequestPermissions
+  MainScene: ExampleMain
+  RequiredPermissions: 00000000020000000100000003000000
 --- !u!4 &524039391
 Transform:
   m_ObjectHideFlags: 0
