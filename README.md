@@ -15,7 +15,7 @@ Use PermissionsHelperPlugin methods to either check if permissions are granted, 
 
 ## What if I need other permissions? ##
 If your app uses the microphone & apple speech recognition, just grab the with_speech_reco branch (that’s what we use for Babble Rabbit). If you need to ask for other permissions, you can modify the objective C/C# plugin files as follows:
-~~~
+
 1. Add additional const int fields to the UnityIOSPermissionsHelper.mm file as needed (follow examples there)
 2. Add a method that requests the permission you need (will vary based on permission, but the model is usually similar to what’s in the class already). 
 3. Update the switch statement in ::requestPermission to call your new method.
@@ -27,7 +27,6 @@ If your app uses the microphone & apple speech recognition, just grab the with_s
 9. Update the example scenes to include your permission: 
     1. Include in the boot strap scenes list of required permissions (on the BootstrapSceneSelector object) and
     2. Add another row to the vertical list of permissions in the RequestPermissions scene.
-~~~
 
 ## License ##
 
