@@ -4,7 +4,7 @@ We’ve been working on mobile AR applications for a while, and the flow for ask
 
 PR Permissions Helper is a Unity IOS plugin that lets the developer control how and when you ask your users for permissions. It contains a core plugin class that supports a few permissions common permissions and it can be easily extended to add others.
 
-The package also contains an example usage flow in the Examples folder. In this case, a bootstrap scene contains code that determines whether or not permissions are needed, and forwards to either a main scene or a permissions scene based on this. Feel free to just skin these scenes / components and use them as is. 
+The package also contains an example usage flow in the Examples folder. In this case, a bootstrap scene contains code that determines whether or not permissions are needed, and forwards to either a main scene or a permissions scene based on this. Feel free to just skin these scenes / components or use them as is. 
 
 
 ## Getting Started ##
