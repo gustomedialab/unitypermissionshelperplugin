@@ -9,9 +9,10 @@ The package also contains an example usage flow in the Examples folder. In this 
 
 ## Getting Started ##
 
-If you just want to use the flow as defined in the examples - grab the unity package/include in your code and skin the UI as you see fit. If you want to create your own flow - you can interact with the PermissionsHelperPlugin class directly. Simply: 
-Call PermissionsHelperPlugin.Instance.SetRequiredPermissions early in your app lifecycle. Then
-Use PermissionsHelperPlugin methods to either check if permissions are granted, or ask for a given permission.
+If you just want to use the flow as defined in the examples - grab the unity package/include in your code and skin the UI as you see fit. If you want to create your own flow - you can interact with the PermissionsHelperPlugin class directly. Simply:
+ 
+1. Call PermissionsHelperPlugin.Instance.SetRequiredPermissions early in your app lifecycle. Then
+2. Use PermissionsHelperPlugin methods to either check if permissions are granted, or ask for a given permission.
 
 ## What if I need other permissions? ##
 If your app uses the microphone & apple speech recognition, just grab the with_speech_reco branch (that’s what we use for Babble Rabbit). If you need to ask for other permissions, you can modify the objective C/C# plugin files as follows:
