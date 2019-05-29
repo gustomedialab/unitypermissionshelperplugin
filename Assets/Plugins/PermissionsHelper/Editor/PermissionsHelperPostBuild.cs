@@ -14,7 +14,7 @@
         //offered in unity build settings.
 		private static List<KeyValuePair<string,string>> UsageStringsToAdd = new List<KeyValuePair<string,string>>()
         {
-            new KeyValuePair<string,string>("NSSpeechRecognitionUsageDescription","Speech recognition so we can understand what you say."),
+          //  new KeyValuePair<string,string>("NSSpeechRecognitionUsageDescription","Speech recognition so we can understand what you say."),
         };
 
 
@@ -22,7 +22,7 @@
         //many are already there.
         private static List<string> XCodeFrameworksToAdd = new List<string>()
         {
-            "Speech.framework"
+          //  "Speech.framework"
         };
 	
 		private static string nameOfPlist = "Info.plist";
@@ -34,7 +34,7 @@
 
         protected static void AddFrameworks(BuildTarget target, string path)
         {
-            if (target == BuildTarget.iOS)
+            if (target == BuildTarget.iOS && XCodeFrameworksToAdd.Count > 0)
 			{
 				// Get target for Xcode project
 				string projPath = PBXProject.GetPBXProjectPath(path);
@@ -59,7 +59,7 @@
         }
 		protected static void ChangeXcodePlist(BuildTarget buildTarget, string pathToBuiltProject) {
 
-			if (buildTarget == BuildTarget.iOS) {
+			if (buildTarget == BuildTarget.iOS && UsageStringsToAdd.Count > 0) {
 
 				// Get plist
 				string plistPath = pathToBuiltProject + "/" + nameOfPlist;

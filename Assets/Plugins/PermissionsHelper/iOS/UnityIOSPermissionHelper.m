@@ -177,49 +177,16 @@ const int PRPermissionStatusUnknownPermission=255; //you asked about a device/pe
 
 - (void) requestSpeechRecognitionPermission:(NSString *)NSGameObject withSuccessCallback:(NSString *)NSSucessCallback withFailureCallback:(NSString *)NSFailureCallback
 {
-    //if already denied, or already granted, do not ask.
-    int permissionStatus = [self GetSpeechRecognitionPermissions];
-    if(permissionStatus==PRPermissionStatusRestricted || permissionStatus==PRPermissionStatusDenied)
-    {
-        //should not ask again, already restricted or denied. call the failure callback.
-        [ self doPermissionsCallback:NSGameObject withCallback:NSFailureCallback withPermission:PRSpeechRecognitionPermissions ];
-        return;
-    }
-    else if(permissionStatus==PRPermissionStatusAuthorized)
-    {
-        //already have permission, call success callback.
-        [ self doPermissionsCallback:NSGameObject withCallback:NSSucessCallback withPermission:PRSpeechRecognitionPermissions ];
-        return;
-    }
-    
-    [SFSpeechRecognizer requestAuthorization:^(SFSpeechRecognizerAuthorizationStatus status) {
-        if(status==SFSpeechRecognizerAuthorizationStatusAuthorized)
-        {
-             [self doPermissionsCallback:NSGameObject withCallback:NSSucessCallback withPermission:PRSpeechRecognitionPermissions ];
-        }
-        else
-        {
-             [self doPermissionsCallback:NSGameObject withCallback:NSFailureCallback withPermission:PRSpeechRecognitionPermissions ];
-        }
-    }];
+    //fail - we don't have support for speech. Use with_reco branch if you want speech
+    [self doPermissionsCallback:NSGameObject withCallback:NSFailureCallback withPermission:PRSpeechRecognitionPermissions ];
     
     
 }
 
 -(int) GetSpeechRecognitionPermissions
 {
-    SFSpeechRecognizerAuthorizationStatus status = [SFSpeechRecognizer authorizationStatus];
-    switch(status)
-    {
-        case SFSpeechRecognizerAuthorizationStatusDenied:
-            return PRPermissionStatusDenied;
-        case SFSpeechRecognizerAuthorizationStatusRestricted:
-            return PRPermissionStatusRestricted;
-        case SFSpeechRecognizerAuthorizationStatusAuthorized:
-            return PRPermissionStatusAuthorized;
-        case SFSpeechRecognizerAuthorizationStatusNotDetermined:
-            return PRPermissionStatusUnknown;
-    }
+    //we don't support - cause we don't include it in this branch. Use speech-reco branch if you
+    //want speech.
     return PRPermissionStatusUnknown;
 }
 

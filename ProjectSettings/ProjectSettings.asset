@@ -315,7 +315,7 @@ PlayerSettings:
   enableCrashReportAPI: 0
   cameraUsageDescription: We need the camera to see the world
   locationUsageDescription: We need your location to know where we are
-  microphoneUsageDescription: We need the microphone to hear you speak
+  microphoneUsageDescription: 
   switchNetLibKey: 
   switchSocketMemoryPoolSize: 6144
   switchSocketAllocatorPoolSize: 128

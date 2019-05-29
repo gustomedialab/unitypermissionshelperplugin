@@ -417,7 +417,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   PermissionsScene: RequestPermissions
   MainScene: ExampleMain
-  RequiredPermissions: 00000000020000000100000003000000
+  RequiredPermissions: 0000000002000000
 --- !u!4 &524039391
 Transform:
   m_ObjectHideFlags: 0

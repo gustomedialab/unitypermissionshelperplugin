@@ -13,7 +13,7 @@
 #import <Foundation/NSException.h>
 #import <AVFoundation/AVFoundation.h>
 #import <UIKit/UIKit.h>
-#import <Speech/Speech.h>
+//#import <Speech/Speech.h>
 #import <CoreLocation/CoreLocation.h>
 
 @interface UnityIOSPermissionsHelper : NSObject {}
