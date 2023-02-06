@@ -17,9 +17,22 @@ const int PRPermissionStatusUnknown=0; //never asked.,
 const int PRPermissionStatusAuthorized=1; //granted already
 const int PRPermissionStatusDenied=2; //denied once, user will need to manual override in settings
 const int PRPermissionStatusRestricted=3; //user doesn't have authority, they will need to ask an admin.
+const int PRPermissionStatusAuthorizedFullAccuracy=4; //granted already with full accuracy
+const int PRPermissionStatusAuthorizedReducedAccuracy=5; //granted already but reduced accuracy
 const int PRPermissionStatusUnknownPermission=255; //you asked about a device/permission we don't know about.
 
 @implementation UnityIOSPermissionsHelper
+- (id) init
+{
+    self = [super init];
+    
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_14_0
+    self.locationManager = [[CLLocationManager alloc] init];
+#endif
+    
+    return self;
+}
+
 - (void) requestPermission:(NSString *)NSGameObject withSuccessCallback:(NSString *)NSSuccessCallback withFailureCallback:(NSString *)NSFailureCallback withPermissionType:(int)permissionType
 {
     switch(permissionType)
@@ -158,6 +171,34 @@ const int PRPermissionStatusUnknownPermission=255; //you asked about a device/pe
 
 -(int) GetLocationWhileUsingPermissions
 {
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_14_0
+    CLAuthorizationStatus status = [self.locationManager authorizationStatus];
+    
+    switch(status)
+    {
+        case kCLAuthorizationStatusDenied:
+            return PRPermissionStatusDenied;
+        case kCLAuthorizationStatusRestricted:
+            return PRPermissionStatusRestricted;
+        case kCLAuthorizationStatusAuthorizedWhenInUse:
+        case kCLAuthorizationStatusAuthorizedAlways:
+        {
+            CLAccuracyAuthorization accuracyStatus = [self.locationManager accuracyAuthorization];
+            
+            if(accuracyStatus == CLAccuracyAuthorizationFullAccuracy) {
+                return PRPermissionStatusAuthorizedFullAccuracy;
+            } else {
+                return PRPermissionStatusAuthorizedReducedAccuracy;
+            }
+            
+            return PRPermissionStatusAuthorized;
+        }
+        case kCLAuthorizationStatusNotDetermined:
+            return PRPermissionStatusUnknown;
+    }
+    
+    return PRPermissionStatusUnknown;
+#else
     CLAuthorizationStatus status = [CLLocationManager authorizationStatus];
     switch(status)
     {
@@ -173,6 +214,7 @@ const int PRPermissionStatusUnknownPermission=255; //you asked about a device/pe
     }
     
     return PRPermissionStatusUnknown;
+#endif
 }
 
 - (void) requestSpeechRecognitionPermission:(NSString *)NSGameObject withSuccessCallback:(NSString *)NSSucessCallback withFailureCallback:(NSString *)NSFailureCallback

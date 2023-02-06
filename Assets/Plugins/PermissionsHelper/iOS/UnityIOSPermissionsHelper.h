@@ -17,6 +17,7 @@
 #import <CoreLocation/CoreLocation.h>
 
 @interface UnityIOSPermissionsHelper : NSObject {}
+@property (strong, nonatomic) CLLocationManager* locationManager;
 
 - (void) requestPermission:(NSString *)NSGameObject withSuccessCallback:(NSString *)NSSuccessCallback withFailureCallback:(NSString *)NSFailureCallback withPermissionType:(int)permissionType;
 - (int) getPermissionStatus:(int)permissionType;

@@ -9,8 +9,11 @@ namespace PatchedReality.Permissions
     public class PermissionsHelperPlugin : Singleton<PermissionsHelperPlugin>
     {
         public delegate void PermissionRequestStartDelegate(PermissionType permission);
+
         public static PermissionRequestStartDelegate OnPermissionRequestStarted;
+
         public delegate void PermissionStatusUpdatedDelegate(PermissionType permission, bool success);
+
         public static PermissionStatusUpdatedDelegate OnPermissionStatusUpdated;
 
         public enum PermissionType
@@ -21,24 +24,27 @@ namespace PatchedReality.Permissions
             PRSpeechRecognitionPermissions = 3,
             PRPermissionTypeUnknown = 255
         }
+
         public enum PermissionStatus
         {
             PRPermissionStatusUnknown = 0,
             PRPermissionStatusAuthorized = 1,
             PRPermissionStatusDenied = 2,
             PRPermissionStatusRestricted = 3,
+            PRPermissionStatusAuthorizedFullAccuracy = 4,
+            PRPermissionStatusAuthorizedReducedAccuracy = 5,
             PRPermissionStatusUnknownPermission = 255
         }
 
-        protected PermissionsHelperPlugin() { }
+        protected PermissionsHelperPlugin()
+        {
+        }
 
         public List<PermissionType> RequiredPermissions
         {
-            get
-            {
-                return requiredPermissions;
-            }
+            get { return requiredPermissions; }
         }
+
         protected List<PermissionType> requiredPermissions = new List<PermissionType>();
 
         /*
@@ -57,10 +63,9 @@ namespace PatchedReality.Permissions
         {
             //returns collective state for required permissions.
             return (new CollectivePermissionsStatus(requiredPermissions)).GetCurrentState();
-            
         }
 
-        
+
         public void RequestPermission(PermissionType permission)
         {
             OnPermissionRequestStarted?.Invoke(permission);
@@ -71,7 +76,8 @@ namespace PatchedReality.Permissions
                 return;
             }
 
-            _requestPermission((int)permission, this.gameObject.name, "PermissionRequestSuccess", "PermissionRequestFailure");
+            _requestPermission((int)permission, this.gameObject.name, "PermissionRequestSuccess",
+                "PermissionRequestFailure");
         }
 
         public void OpenSettings()
@@ -87,13 +93,17 @@ namespace PatchedReality.Permissions
         void RequestLocationPermissions()
         {
             PermissionStatus currStatus = this.GetPermissionStatus(PermissionType.PRLocationWhileUsingPermissions);
-            if (currStatus.Equals(PermissionStatus.PRPermissionStatusDenied) || currStatus.Equals(PermissionStatus.PRPermissionStatusRestricted))
+            if (currStatus.Equals(PermissionStatus.PRPermissionStatusDenied) ||
+                currStatus.Equals(PermissionStatus.PRPermissionStatusRestricted))
             {
                 //fail immediately, no reason to bother checking.
                 this.PermissionRequestFailure(((int)PermissionType.PRLocationWhileUsingPermissions).ToString());
                 return;
             }
-            else if (currStatus.Equals(PermissionStatus.PRPermissionStatusAuthorized))
+
+            if (currStatus.Equals(PermissionStatus.PRPermissionStatusAuthorized) ||
+                currStatus.Equals(PermissionStatus.PRPermissionStatusAuthorizedFullAccuracy) ||
+                currStatus.Equals(PermissionStatus.PRPermissionStatusAuthorizedReducedAccuracy))
             {
                 //succeed immediately, they have already granted what we need.
                 this.PermissionRequestSuccess(((int)PermissionType.PRLocationWhileUsingPermissions).ToString());
@@ -103,6 +113,7 @@ namespace PatchedReality.Permissions
             //otherwise, have our little location helper find out whats what.
             LocationHelper.RequestLocationPermissions(this.PermissionRequestSuccess, this.PermissionRequestFailure);
         }
+
         void PermissionRequestSuccess(string permissionType)
         {
             int permAsInt;
@@ -124,6 +135,7 @@ namespace PatchedReality.Permissions
             {
                 type = (PermissionType)permAsInt;
             }
+
             Debug.Log("Got failure callback from native with: " + type.ToString());
             OnPermissionStatusUpdated?.Invoke(type, false);
         }
@@ -141,12 +153,13 @@ namespace PatchedReality.Permissions
                         GameObject go = new GameObject("LocationPermissionChecker");
                         go.transform.SetParent(this.transform);
                         locationHelper = go.AddComponent<LocationChecker>();
-
                     }
                 }
+
                 return locationHelper;
             }
         }
+
         LocationChecker locationHelper;
 
 #if UNITY_IOS && !UNITY_EDITOR
@@ -159,7 +172,8 @@ namespace PatchedReality.Permissions
         [DllImport ("__Internal")]
         private static extern void _openSettings();
 #else
-        private static void _requestPermission(int permissionType, string gameObject, string successCallback, string failureCallback)
+        private static void _requestPermission(int permissionType, string gameObject, string successCallback,
+            string failureCallback)
         {
             Debug.Log("request started " + permissionType.ToString());
             //simulate the request taking time...
@@ -168,8 +182,6 @@ namespace PatchedReality.Permissions
             {
                 go.SendMessage(failureCallback, permissionType.ToString());
             }
-        
-            
         }
 
         private static int _getPermissionStatus(int permissionType)
@@ -183,8 +195,7 @@ namespace PatchedReality.Permissions
             UnityEngine.Debug.LogWarning("Open Settings  - platform unsupported");
         }
 
-        
-#endif
 
+#endif
     }
 }
